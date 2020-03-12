@@ -23,10 +23,10 @@ import java.io.IOException;
 
 public class VaultContent {
     private final static String CHAR_ENCODING = "UTF-8";
-    Logger logger = LoggerFactory.getLogger(VaultContent.class);
-    private byte[] salt;
-    private byte[] hmac;
-    private byte[] data;
+    private final static Logger logger = LoggerFactory.getLogger(VaultContent.class);
+    private final byte[] salt;
+    private final byte[] hmac;
+    private final byte[] data;
 
     public VaultContent(byte[] encryptedVault) throws IOException {
         byte[][] vaultContents = splitData(encryptedVault);
@@ -67,7 +67,7 @@ public class VaultContent {
 
         int idx = 0;
         int saltLen = 0;
-        while (encodedData[idx] != '\n' && idx < encodedData.length) {
+        while (encodedData[idx] != '\n') {
             saltLen++;
             idx++;
         }
@@ -79,7 +79,7 @@ public class VaultContent {
         result[0] = saltLen;
 
         int hmacLen = 0;
-        while (encodedData[idx] != '\n' && idx < encodedData.length) {
+        while (encodedData[idx] != '\n') {
             hmacLen++;
             idx++;
         }
@@ -107,7 +107,7 @@ public class VaultContent {
         int idx = 0;
         int saltIdx = 0;
         result[0] = new byte[partsLength[0]];
-        while (encodedData[idx] != '\n' && idx < encodedData.length) {
+        while (encodedData[idx] != '\n') {
             result[0][saltIdx++] = encodedData[idx++];
         }
         // Skip the newline
@@ -117,7 +117,7 @@ public class VaultContent {
         }
         int macIdx = 0;
         result[1] = new byte[partsLength[1]];
-        while (encodedData[idx] != '\n' && idx < encodedData.length) {
+        while (encodedData[idx] != '\n') {
             result[1][macIdx++] = encodedData[idx++];
         }
         // Skip the newline

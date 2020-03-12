@@ -29,7 +29,7 @@ public class VaultInfo {
     public final static int CYPHER_PART = 2;
     public final static String VAULT_MAGIC = "$ANSIBLE_VAULT";
     public final static String VAULT_VERSION = "1.1";
-    Logger logger = LoggerFactory.getLogger(VaultInfo.class);
+    public final static Logger logger = LoggerFactory.getLogger(VaultInfo.class);
     private boolean validVault;
     private String vaultVersion;
     private String vaultCypher;
@@ -48,8 +48,7 @@ public class VaultInfo {
     }
 
     public static String vaultInfoForCypher(String vaultCypher) {
-        String infoLine = VAULT_MAGIC + ";" + VAULT_VERSION + ";" + vaultCypher;
-        return infoLine;
+        return VAULT_MAGIC + ";" + VAULT_VERSION + ";" + vaultCypher;
     }
 
     public boolean isEncryptedVault() {

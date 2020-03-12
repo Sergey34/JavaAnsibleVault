@@ -29,6 +29,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
 public class CypherAES256 implements CypherInterface {
@@ -43,7 +44,7 @@ public class CypherAES256 implements CypherInterface {
     public final static int ITERATIONS = 10000;
     private static final String JDK8_UPF_URL = "http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html";
     private static final int SALT_LENGTH = 32;
-    Logger logger = LoggerFactory.getLogger(CypherAES256.class);
+    private static final Logger logger = LoggerFactory.getLogger(CypherAES256.class);
 
     private boolean hasValidAESProvider() {
         boolean canCrypt = false;
@@ -63,7 +64,7 @@ public class CypherAES256 implements CypherInterface {
     }
 
     public byte[] calculateHMAC(byte[] key, byte[] data) throws IOException {
-        byte[] computedMac = null;
+        byte[] computedMac;
 
         try {
             SecretKeySpec hmacKey = new SecretKeySpec(key, KEYGEN_ALGO);
@@ -78,7 +79,6 @@ public class CypherAES256 implements CypherInterface {
     }
 
     public boolean verifyHMAC(byte[] hmac, byte[] key, byte[] data) throws IOException {
-        boolean matches = false;
         byte[] calculated = calculateHMAC(key, data);
         return Arrays.equals(hmac, calculated);
     }
@@ -99,7 +99,7 @@ public class CypherAES256 implements CypherInterface {
     }
 
     public byte[] pad(byte[] cleartext) throws IOException {
-        byte[] padded = null;
+        byte[] padded;
 
         try {
             int blockSize = Cipher.getInstance(CYPHER_ALGO).getBlockSize();
@@ -111,8 +111,8 @@ public class CypherAES256 implements CypherInterface {
             padded = Arrays.copyOf(cleartext, cleartext.length + padding_length);
             padded[padded.length - 1] = (byte) padding_length;
 
-        } catch (Exception ex) {
-            new IOException("Error calculating padding for " + CYPHER_ALGO + ": " + ex.getMessage());
+        } catch (GeneralSecurityException ex) {
+            throw new IOException("Error calculating padding for " + CYPHER_ALGO + ": " + ex.getMessage());
         }
 
         return padded;
@@ -138,8 +138,7 @@ public class CypherAES256 implements CypherInterface {
         try {
             Cipher cipher = Cipher.getInstance(CYPHER_ALGO);
             cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-            byte[] encrypted = cipher.doFinal(cleartext);
-            return encrypted;
+            return cipher.doFinal(cleartext);
         } catch (Exception ex) {
             throw new IOException("Failed to encrypt data: " + ex.getMessage());
         }

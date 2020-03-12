@@ -63,8 +63,7 @@ public class EncryptionKeychain {
             PBKDF2Parameters params = new PBKDF2Parameters(algo, CHAR_ENCODING, salt, iterations);
             int keylength = ivlen + 2 * keylen;
             PBKDF2Engine pbkdf2Engine = new PBKDF2Engine(params);
-            byte[] keys = pbkdf2Engine.deriveKey(password, keylength);
-            return keys;
+            return pbkdf2Engine.deriveKey(password, keylength);
         } catch (Exception ex) {
             throw new IOException("Cryptofailure: " + ex.getMessage());
         }
@@ -79,18 +78,15 @@ public class EncryptionKeychain {
     }
 
     private byte[] getEncryptionKey(byte[] keys) {
-        byte[] result = Arrays.copyOfRange(keys, 0, keylen);
-        return result;
+        return Arrays.copyOfRange(keys, 0, keylen);
     }
 
     private byte[] getHMACKey(byte[] keys) {
-        byte[] result = Arrays.copyOfRange(keys, keylen, keylen * 2);
-        return result;
+        return Arrays.copyOfRange(keys, keylen, keylen * 2);
     }
 
     private byte[] getIV(byte[] keys) {
-        byte[] result = Arrays.copyOfRange(keys, keylen * 2, keylen * 2 + ivlen);
-        return result;
+        return Arrays.copyOfRange(keys, keylen * 2, keylen * 2 + ivlen);
     }
 
     private byte[] generateSalt(int length) {

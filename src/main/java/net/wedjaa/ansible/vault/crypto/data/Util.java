@@ -16,22 +16,15 @@
 
 package net.wedjaa.ansible.vault.crypto.data;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Arrays;
 
 
 public class Util {
-
-    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
     final protected static String LINE_BREAK = "\n";
-    final protected static String CHAR_ENCODING = "UTF-8";
     private static final int DEFAULT_LINE_LENGTH = 80;
-    private static Logger logger = LoggerFactory.getLogger(Util.class);
 
-    public static String join(String[] datalines) {
-        return String.join("", Arrays.asList(datalines));
+    public static String join(String[] dataLines) {
+        return String.join("", Arrays.asList(dataLines));
     }
 
     public static byte[] unhex(String hexed) {
@@ -49,18 +42,18 @@ public class Util {
     }
 
     public static String hexit(byte[] unhexed, int lineLength) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         int colIdx = 0;
         for (byte val : unhexed) {
-            result += String.format("%02x", val);
+            result.append(String.format("%02x", val));
             colIdx++;
             if (lineLength > 0 && colIdx >= lineLength / 2) {
-                result += LINE_BREAK;
+                result.append(LINE_BREAK);
                 colIdx = 0;
             }
         }
 
-        return result;
+        return result.toString();
     }
 
     public static VaultInfo getVaultInfo(String vaultData) {
