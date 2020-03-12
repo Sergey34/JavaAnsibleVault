@@ -17,67 +17,58 @@
 package net.wedjaa.ansible.vault;
 
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-public class ManagerTest
-{
-    Logger logger = LoggerFactory.getLogger(ManagerTest.class);
 
+public class ManagerTest {
     final static String API_USER = "Secret User";
     final static String API_CLIENT = "ClientID";
     final static String API_PASSWORD = "VerySuperSecretPassword";
     final static String WRONG_PASS_EX = "HMAC Digest doesn't match - possibly it's the wrong password.";
+    Logger logger = LoggerFactory.getLogger(ManagerTest.class);
 
     @Test
-    public void testValidYamlVault()
-    {
-        Manager manager  = new Manager();
+    public void testValidYamlVault() {
+        Manager manager = new Manager();
         logger.info("Testing valid password");
         ProvisioningInfo provisioningInfo = new ProvisioningInfo();
         provisioningInfo.setApiUser(API_USER);
         provisioningInfo.setApiClientId(API_CLIENT);
         provisioningInfo.setApiPassword(API_PASSWORD);
 
-        try
-        {
+        try {
             String provisioningVault = manager.writeToVault(provisioningInfo, "password");
             logger.debug("Created vault:\n{}", provisioningVault);
             ProvisioningInfo backtoYa = (ProvisioningInfo) manager.getFromVault(provisioningInfo.getClass(), provisioningVault, "password");
             logger.debug("Read Back:\n{}", backtoYa.toString());
             assertEquals(provisioningInfo.toString(), backtoYa.toString());
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             fail("Exception while testing valid password vault: " + e.getMessage());
         }
     }
 
     @Test
-    public void testInvalidYamlVault()
-    {
-        Manager manager  = new Manager();
+    public void testInvalidYamlVault() {
+        Manager manager = new Manager();
         logger.info("Testing invalid password");
         ProvisioningInfo provisioningInfo = new ProvisioningInfo();
         provisioningInfo.setApiUser(API_USER);
         provisioningInfo.setApiClientId(API_CLIENT);
         provisioningInfo.setApiPassword(API_PASSWORD);
 
-        try
-        {
+        try {
             String provisioningVault = manager.writeToVault(provisioningInfo, "password");
             logger.debug("Created vault:\n{}", provisioningVault);
             ProvisioningInfo backtoYa = (ProvisioningInfo) manager.getFromVault(provisioningInfo.getClass(), provisioningVault, "wrong_password");
             logger.debug("Read Back:\n{}", backtoYa.toString());
             fail("Exception while testing invalid password vault- correct value obtained: " + backtoYa.toString());
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.debug("Expected exception: " + WRONG_PASS_EX);
             assertEquals(WRONG_PASS_EX, e.getMessage());
         }

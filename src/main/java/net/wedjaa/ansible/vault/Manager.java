@@ -27,23 +27,19 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-public class Manager
-{
+public class Manager {
     Logger logger = LoggerFactory.getLogger(Manager.class);
 
-    public Manager()
-    {
+    public Manager() {
 
     }
 
-    public Object getFromYaml(Class objectClass, String yaml) throws YamlException
-    {
+    public Object getFromYaml(Class objectClass, String yaml) throws YamlException {
         YamlReader reader = new YamlReader(new StringReader(yaml));
         return reader.read(objectClass);
     }
 
-    public String writeToYaml(Object object) throws YamlException
-    {
+    public String writeToYaml(Object object) throws YamlException {
         StringWriter resultWriter = new StringWriter();
         YamlWriter writer = new YamlWriter(resultWriter);
         writer.write(object);
@@ -51,16 +47,14 @@ public class Manager
         return resultWriter.getBuffer().toString();
     }
 
-    public Object getFromVault(Class objectClass, String yaml, String password) throws IOException
-    {
-        byte [] clearYaml = VaultHandler.decrypt(yaml.getBytes(), password);
+    public Object getFromVault(Class objectClass, String yaml, String password) throws IOException {
+        byte[] clearYaml = VaultHandler.decrypt(yaml.getBytes(), password);
         return getFromYaml(objectClass, new String(clearYaml));
     }
 
-    public String writeToVault(Object object, String password) throws IOException
-    {
+    public String writeToVault(Object object, String password) throws IOException {
         String clearYaml = writeToYaml(object);
-        byte [] yamlVault = VaultHandler.encrypt(clearYaml.getBytes(), password);
+        byte[] yamlVault = VaultHandler.encrypt(clearYaml.getBytes(), password);
         return new String(yamlVault);
     }
 
